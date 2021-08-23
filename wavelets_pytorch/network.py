@@ -75,14 +75,14 @@ class TorchFilterBank(nn.Module):
 
         self._filters = [None]*len(filters)
 
-        assert filt.dtype in (np.float32, np.float64, np.complex64, np.complex128)
+        assert filters.dtype in (np.float32, np.float64, np.complex64, np.complex128)
 
-        if np.iscomplex(filt).any():
+        if np.iscomplex(filters).any():
             chn_out = 2
-            filt_weights = np.asarray([np.real(filt), np.imag(filt)], np.float32)
+            filt_weights = np.asarray([np.real(filters), np.imag(filters)], np.float32)
         else:
             chn_out = 1
-            filt_weights = filt.astype(np.float32)[None,:]
+            filt_weights = filters.astype(np.float32)[None,:]
 
         filt_weights = np.expand_dims(filt_weights, 1)  # append chn_in dimension
         filt_size = filt_weights.shape              # filter length
