@@ -73,7 +73,7 @@ class TorchFilterBank(nn.Module):
         assert isinstance(filters, list)
         assert padding_type in ['SAME', 'VALID']
 
-        self._filters = [None]*len(filters)
+        self._filters = np.array(filters) #[None]*len(filters)
 
         assert filters.dtype in (np.float32, np.float64, np.complex64, np.complex128)
 
