@@ -74,27 +74,26 @@ class TorchFilterBank(nn.Module):
         assert padding_type in ['SAME', 'VALID']
 
         self._filters = [None]*len(filters)
-        for ind, filt in enumerate(filters):
 
-            assert filt.dtype in (np.float32, np.float64, np.complex64, np.complex128)
+        assert filt.dtype in (np.float32, np.float64, np.complex64, np.complex128)
 
-            if np.iscomplex(filt).any():
-                chn_out = 2
-                filt_weights = np.asarray([np.real(filt), np.imag(filt)], np.float32)
-            else:
-                chn_out = 1
-                filt_weights = filt.astype(np.float32)[None,:]
+        if np.iscomplex(filt).any():
+            chn_out = 2
+            filt_weights = np.asarray([np.real(filt), np.imag(filt)], np.float32)
+        else:
+            chn_out = 1
+            filt_weights = filt.astype(np.float32)[None,:]
 
-            filt_weights = np.expand_dims(filt_weights, 1)  # append chn_in dimension
-            filt_size = filt_weights.shape[-1]              # filter length
-            padding = self._get_padding(padding_type, filt_size)
+        filt_weights = np.expand_dims(filt_weights, 1)  # append chn_in dimension
+        filt_size = filt_weights.shape              # filter length
+        padding = self._get_padding(padding_type, filt_size)
 
-            conv = nn.Conv1d(1, chn_out, kernel_size=filt_size, padding=padding, bias=False)
-            conv.weight.data = torch.from_numpy(filt_weights)
-            conv.weight.requires_grad_(False)
+        conv = nn.Conv2d(1, chn_out, kernel_size=filt_size, padding=padding, bias=False)
+        conv.weight.data = torch.from_numpy(filt_weights)
+        conv.weight.requires_grad_(False)
 
-            if self._cuda: conv.cuda()
-            self._filters[ind] = conv
+        if self._cuda: conv.cuda()
+        self._filters = conv
 
     @staticmethod
     def _get_padding(padding_type, kernel_size):
