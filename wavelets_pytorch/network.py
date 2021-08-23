@@ -76,7 +76,7 @@ class TorchFilterBank(nn.Module):
         filters = np.array(filters)
         #self._filters = [None]*len(filters)
 
-        assert filters.dtype in (np.float32, np.float64, np.complex64, np.complex128)
+        #assert filters.dtype in (np.float32, np.float64, np.complex64, np.complex128)
 
         if np.iscomplex(filters).any():
             chn_out = 2
